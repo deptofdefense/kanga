@@ -1,0 +1,61 @@
+version: '3'
+services:
+  db:
+    image: kanga-db:latest
+    container_name: kanga-db
+    environment:
+      - "POSTGRES_DB=kanga"
+      - "POSTGRES_USER=kanga"
+      - "POSTGRES_PASSWORD"
+      - "PGDATA=/var/lib/postgresql/data"
+    volumes:
+      - ./mnt/postgresql:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    image: kanga-app:latest
+    container_name: kanga-app
+    # command: "python manage.py runserver 0.0.0.0:$APP_PORT"
+    # To serve with gunicorn, use the following command.
+    #command: "/usr/local/bin/gunicorn -c gunicorn.conf.py kanga.wsgi:application -b 0.0.0.0:$APP_PORT"
+    environment:
+      - "ALLOWED_HOSTS=localhost,kangalocal"
+      - "CSRF_COOKIE_SECURE"
+      - "DB_HOST=db"
+      - "DB_NAME"
+      - "DB_USER"
+      - "DB_PASSWORD"
+      - "DB_PORT"
+      - "APP_DEBUG"
+      - "APP_PORT=8080"
+      - "APP_SECRET_KEY"
+      - "REMOTE_FIXTURES_BUCKET_NAME"
+      - "SESSION_COOKIE_SECURE"
+      - "STATIC_ROOT=/kanga/static"
+      - "TWILIO_EDGE"
+      # these are only needed for local testing of s3 access
+      - "AWS_DEFAULT_REGION"
+      - "AWS_ACCESS_KEY_ID"
+      - "AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - .:/kanga
+      - ./mnt/static:/kanga/static
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      - db
+    entrypoint: [/bin/bash, /kanga/docker/kanga/gunicorn/entrypoint.sh]
+  web:
+    image: kanga-web:latest
+    container_name: kanga-web
+    environment:
+      - NGINX_HOST
+      - NGINX_PORT=443
+    volumes:
+      - ./temp:/etc/nginx/tls
+      - ./mnt/static:/var/www/static
+    ports:
+      - "${WEB_PORT_HTTP:-80}:80"
+      - "${WEB_PORT_HTTPS:-443}:443"
+    depends_on:
+      - app

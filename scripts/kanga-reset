@@ -1,0 +1,124 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly DIR
+
+usage() {
+  echo "${0##*/}"
+  exit 1
+}
+
+if [[ "$#" -ne 0 ]]; then
+  usage
+fi
+
+if ! command -v jq &> /dev/null; then
+  echo "error: jq not installed" 1>&2
+  exit 1
+fi
+
+if ! command -v psql &> /dev/null; then
+  echo "error: psql not installed" 1>&2
+  exit 1
+fi
+
+if ! command -v python &> /dev/null; then
+  echo "error: python not installed" 1>&2
+  exit 1
+fi
+
+# Clear database
+
+set +e
+
+DB_NAME=postgres scripts/psql-wrapper 'DROP DATABASE kanga;'
+
+DB_NAME=postgres scripts/psql-wrapper 'CREATE DATABASE kanga;'
+
+set -e
+
+# Make migrations
+
+make migrations
+
+# Migrate database
+
+make migrate
+
+# Create admin user
+
+make superuser
+
+# Create a secret key
+
+make temp/secretkey
+
+# Creating data directory
+
+mkdir -p "${DIR}/../data/"
+
+# Import Data
+
+account=$(python manage.py add-account \
+--name "${TWILIO_ACCOUNT_NAME}" \
+--sid "${TWILIO_ACCOUNT_SID}" \
+--auth-token "${TWILIO_ACCOUNT_AUTH_TOKEN}" | jq -c '.')
+
+echo "${account}"
+
+account_id=$(echo "${account}" | jq -c '.id')
+
+if [[ ! -f "${DIR}/../data/groups.txt" ]]; then
+  echo "Missing data/groups.txt"
+  echo "Creating data/groups.txt"
+  printf 'test\n' > "${DIR}/../data/groups.txt"
+fi
+
+groups=$(python manage.py add-groups \
+--path "${DIR}/../data/groups.txt" | jq -c '.')
+
+echo "${groups}"
+
+if [[ ! -f "${DIR}/../data/origins.txt" ]]; then
+  echo "Missing data/origins.txt"
+  echo "Creating data/origins.txt"
+  printf '(202) 555-1234' > "${DIR}/../data/origins.txt"
+fi
+
+origins=$(python manage.py add-origins \
+--account "${account_id}" \
+--path "${DIR}/../data/origins.txt" | jq -c '.')
+
+echo "${origins}"
+
+if [[ ! -f "${DIR}/../data/targets.csv" ]]; then
+  echo "Missing data/targets.csv"
+  echo "Creating data/targets.csv"
+  printf 'group,first_name,last_name,phone_number\ntest,hello,world,(202) 555-1234' > "${DIR}/../data/targets.csv"
+fi
+
+targets=$(python manage.py add-targets \
+--path "${DIR}/../data/targets.csv" \
+--group "test" \
+--first-name-field "first_name" \
+--last-name-field "last_name" \
+--phone-number-field "phone_number" | jq -c '.')
+
+echo "${targets}"
+
+if [[ ! -f "${DIR}/../data/templates.csv" ]]; then
+  echo "Missing data/templates.csv"
+  echo "Creating data/templates.csv"
+  printf 'name,body\ntest name,test body' > "${DIR}/../data/templates.csv"
+fi
+
+templates=$(python manage.py add-templates \
+--path "${DIR}/../data/templates.csv" | jq -c '.')
+
+echo "${targets}"
+
+# Start Server
+
+make runserver

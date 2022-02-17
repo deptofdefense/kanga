@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">View Account {{ a.uuid }}</span>
+  </div>
+  <div>
+    <form class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ a.uuid }}">
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="{{ a.name }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">SID</div>
+        <input type="text" id="sid" name="sid" value="{{ a.sid }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Auth Token</div>
+        <input type="text" id="auth_token" name="auth_token" value="{{ a.auth_token }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Active</div>
+        <input type="text" id="active" name="active" value="{{ a.active }}" disabled><br>
+      </div>
+      <!-- -->
+      <a href="{% url 'plan_new' %}?account={{ a.uuid }}" class="btn"><span>Plan</span></a>
+    </form>
+  </div>
+</div>
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Active Phone Numbers</span>
+  </div>
+  <br>
+  {% if active_origins %}
+  {% for o in active_origins %}
+  <div class="list-item">
+    <div class="item-body" style="display: inline-block;">
+      <div class="item-title">{{ o.phone_number }}</div>
+      <div class="item-subtitle">({{ o.capabilities|join:", "}})</div>
+      <div class="item-subtitle">Messages Sent: {{ o.total_messages }}</div>
+    </div>
+    <br>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No origin phone numbers found</span>
+  </div>
+  {% endif %}
+</div>
+<hr>
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Inactive Phone Numbers</span>
+  </div>
+  <br>
+  {% if inactive_origins %}
+  {% for o in inactive_origins %}
+  <div class="list-item">
+    <div class="item-body" style="display: inline-block;">
+      <div class="item-title">{{ o.phone_number }}</div>
+      <div class="item-subtitle">{({{ o.capabilities|join:", "}})</div>
+      <div class="item-subtitle">Messages Sent: {{ o.total_messages }}</div>
+    </div>
+    <br>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No origin phone numbers found</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

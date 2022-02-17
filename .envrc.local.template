@@ -1,0 +1,66 @@
+#! /usr/bin/env bash
+
+#
+# This is a template. Make a copy before modifying:
+#
+#   cp .envrc.local.template .envrc.local
+#
+
+######################
+# Path Configuration #
+######################
+
+# If libpq is installed
+if [[ -f /usr/local/Cellar/libpq/14.1/bin/pg_config ]]; then
+  # If libpq is installed, then add to path
+  PATH_add /usr/local/Cellar/libpq/14.1/bin
+  # Update ldflags
+  export LDFLAGS="${LDFLAGS} $(pg_config --ldflags)"
+fi
+
+# If openssl is installed
+if [[ -f /usr/local/Cellar/openssl@1.1/1.1.1m/bin/openssl ]]; then
+  # If openssl is installed, then add to path
+  PATH_add /usr/local/Cellar/openssl@1.1/1.1.1m/bin
+  export LDFLAGS="${LDFLAGS} -I/usr/local/Cellar/openssl@1.1/1.1.1m/include -L/usr/local/Cellar/openssl@1.1/1.1.1m/lib"
+fi
+
+#####################
+# AWS Configuration #
+#####################
+
+export AWS_PROFILE=
+
+########################
+# Twilio Configuration #
+########################
+
+export TWILIO_ACCOUNT_NAME=
+
+export TWILIO_ACCOUNT_SID=
+
+export TWILIO_ACCOUNT_AUTH_TOKEN=
+
+##########################
+# Database Configuration #
+##########################
+
+export POSTGRES_PASSWORD=kanga
+
+export DB_PASSWORD=${POSTGRES_PASSWORD}
+
+########################
+# Django Configuration #
+########################
+
+if [[ -f temp/secretkey ]]; then
+  export APP_SECRET_KEY=$(cat temp/secretkey)
+fi
+
+#######################
+# Kanga Configuration #
+#######################
+
+export REMOTE_FIXTURES_BUCKET_NAME=
+
+export TLS_CERTS_BUCKET_NAME=

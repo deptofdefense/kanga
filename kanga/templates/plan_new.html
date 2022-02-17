@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block extrastyle %}
+<style>
+  .list-item.template:hover {
+    background: lavender;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">New Plan</span>
+  </div>
+  <div class="section-body">
+    <form action="{% url 'plan_new' %}" method="post" class="form">
+      {% csrf_token %}
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="">
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Platforms</div>
+        <div id="platforms" name="platforms">
+          {% if platforms %}
+          {% for platform in platforms %}
+          <input
+            type="checkbox"
+            id="platform-{{ platform.id }}"
+            name="platform-{{ platform.id }}"
+            value="{{ platform.id }}">
+          <label
+            style="padding:4px;"
+            for="platform-{{ platform.id }}">{{ platform.title }}</label>
+          <span style="padding:8px;"></span>
+          {% if forloop.counter0|add:"1"|divisibleby:"6" %}<br>{% endif %}
+          {% endfor %}
+          {% else %}
+          <div style="margin-bottom:10px;"><span>No platforms found</span></div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Account</div>
+        <select type="text" id="account" name="account" onchange="accountChanged()">
+          <option value="--">--</option>
+          {% for a in accounts %}
+            {% if a.uuid == account_uuid %}
+            <option value="{{ a.uuid }}" selected>{{ a.name }}</option>
+            {% else %}
+            <option value="{{ a.uuid }}">{{ a.name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Origins</div>
+        <div id="origins" name="origins">
+          {% if origins %}
+          {% for origin in origins %}
+          <input
+            type="checkbox"
+            id="origin-{{ origin.id }}"
+            name="origin-{{ origin.id }}"
+            value="{{ origin.uuid }}"
+            class="origin"
+            data-account="{{ origin.account_uuid }}"{% if origin.account_uuid != account_uuid %}disabled{% endif %}>
+          <label
+            style="padding:4px;"
+            for="origin-{{ origin.id }}">{{ origin.phone_number }}</label>
+          <span style="padding:8px;"></span>
+          {% endfor %}
+          {% else %}
+          <div style="margin-bottom:10px;"><span>No phone numbers found</span></div>
+          {% endif %}
+          <br>
+        </div>
+      </div>
+      <script>
+        function accountChanged() {
+          let a = document.getElementById("account").value;
+          console.log(a);
+          let origins = document.getElementsByClassName('origin')
+          console.log(origins);
+          for (let i = 0; i < origins.length; i++) {
+            origins[i].disabled = origins[i].dataset.account != a;
+          }
+        }
+      </script>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Groups</div>
+        <div id="groups" name="groups">
+          {% if groups %}
+          {% for group in groups %}
+          <input
+            type="checkbox"
+            id="group-{{ group.id }}"
+            name="group-{{ group.id }}"
+            value="{{ group.uuid }}">
+          <label
+            style="padding:4px;"
+            for="group-{{ group.id }}">{{ group.name }}</label>
+          <span style="padding:8px;"></span>
+          {% if forloop.counter0|add:"1"|divisibleby:"6" %}<br>{% endif %}
+          {% endfor %}
+          {% else %}
+          <div style="margin-bottom:10px;"><span>No groups found</span></div>
+          {% endif %}
+          <br>
+        </div>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Templates</div>
+        <div id="templates" name="templates">
+          {% if templates %}
+          {% for template in templates %}
+          <label for="template-{{ template.id }}">
+            <div class="list-item template">
+              <input
+                type="checkbox"
+                id="template-{{ template.id }}"
+                name="template-{{ template.id }}"
+                value="{{ template.uuid }}">
+              <span>{{ template.name }}</span>
+              <span style="padding:8px;"></span>
+              <pre>{{ template.body }}</pre>
+            </div>
+          </label>
+          {% endfor %}
+          {% else %}
+          <div style="margin-bottom:10px;"><span>No templates found</span></div>
+          {% endif %}
+          <br>
+        </div>
+      </div>
+      <!-- -->
+      <input type="submit" value="Save">
+    </form>
+  </div>
+</div>
+{% endblock %}

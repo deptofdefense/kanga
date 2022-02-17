@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Assets</span>
+  </div>
+  <br>
+  <form>
+    <input id="name" type="text" name="name" required>
+    <input id="file" type="file" name="file" required>
+    <div style="padding:10px;">
+      <input type="submit" value="Create Plan">
+    </div>
+  </form>
+</div>
+{% endblock %}

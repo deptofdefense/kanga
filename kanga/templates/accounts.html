@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Accounts</span>
+    <a href="{% url 'account_new' %}" class="section-btn">
+      <span>Add Account</span>
+    </a>
+  </div>
+  <br>
+  {% if accounts %}
+    {% for a in accounts %}
+    <div class="list-item">
+      <div class="item-body" style="display: inline-block;">
+        <div class="item-title">{{ a.name }}</div>
+        <div class="item-subtitle">({{ a.uuid }})</div>
+      </div>
+      <a href="{% url 'account_delete' u=a.uuid %}" class="btn" style="float:right;"><span>Delete</span></a>
+      <a href="{% url 'account_edit' u=a.uuid %}" class="btn" style="float:right;"><span>Edit</span></a>
+      <a href="{% url 'account_view' u=a.uuid %}" class="btn" style="float:right;"><span>View</span></a>
+      <a href="{% url 'plan_new' %}?account={{ a.uuid }}" class="btn" style="float:right;"><span>Plan</span></a>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No accounts found</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

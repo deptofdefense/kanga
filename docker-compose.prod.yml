@@ -1,0 +1,44 @@
+version: '3'
+services:
+  app:
+    image: kanga-app:latest
+    container_name: kanga-app
+    environment:
+      - "DB_HOST"
+      - "DB_NAME"
+      - "DB_USER"
+      - "DB_PASSWORD"
+      - "DB_PORT"
+      - "APP_DEBUG=true"
+      - "ALLOWED_HOSTS=kanga.dds.mil"
+      - "APP_SECRET_KEY"
+      - "APP_PORT=8080"
+      - "SESSION_COOKIE_SECURE=true"
+      - "CSRF_COOKIE_SECURE=true"
+      - "TWILIO_EDGE"
+      - "STATIC_ROOT=/kanga/static"
+      - "REMOTE_FIXTURES_BUCKET_NAME"
+      # these are only needed for local testing of s3 access
+      - "AWS_DEFAULT_REGION"
+      - "AWS_ACCESS_KEY_ID"
+      - "AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - .:/kanga
+      - /home/ubuntu/static:/kanga/static
+    ports:
+      - "8080:8080"
+    entrypoint: [/bin/bash, /kanga/docker/kanga/gunicorn/entrypoint.sh]
+  web:
+    image: kanga-web:latest
+    container_name: kanga-web
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=443
+    volumes:
+      - /home/ubuntu/tls:/etc/nginx/tls
+      - /home/ubuntu/static:/var/www/static
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app

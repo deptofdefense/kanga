@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Edit Template {{ t.uuid }}</span>
+  </div>
+  <div class="section-body">
+    <form action="{% url 'template_edit' u=t.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ t.uuid }}">
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="{{ t.name }}"><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Body</div>
+        <textarea
+          name="body"
+          rows="8"
+          cols="80"
+          class="form-textarea">{{ t.body }}</textarea>
+      </div>
+      <!-- -->
+      <div class="form-buttons">
+        <input type="submit" value="Save">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

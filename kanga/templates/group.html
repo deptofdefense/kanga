@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Group: {{ group.name }}</span>
+    <a href="/groups/new" class="section-btn">
+      <span>Edit</span>
+    </a>
+  </div>
+</div>
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Targets</span>
+    <a href="/targets/new" class="section-btn">
+      <span>Add Target</span>
+    </a>
+  </div>
+  <br>
+  {% for t in targets %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>{{ t.phone_number }}</span>
+    <form><button class="btn" style="float:right;"><span>Remove</span></button></form>
+    <br>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

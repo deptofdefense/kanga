@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly DIR
+
+usage() {
+  echo "${0##*/}"
+  exit 1
+}
+
+if [[ "$#" -ne 0 ]]; then
+  usage
+fi
+
+if command -v python > /dev/null; then
+  python manage.py pull-fixtures --objectkey kanga_fixtures/targets-new.csv --fixturetype targets
+else
+  python3 manage.py pull-fixtures --objectkey kanga_fixtures/targets-new.csv --fixturetype targets
+fi
+
+
+
+

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">View Plan</span>
+  </div>
+  <div class="section-body">
+    <form id="plan" name="plan" action="{% url 'plan_view' u=plan.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ plan.uuid }}">
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        {{ plan.name }}
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Groups</div>
+        {% for group in groups %}
+          {{ group.name }} ({{ group.total }})<br>
+        {% endfor %}
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Platforms</div>
+        {% for platform in platforms %}{{ platform }}<br>{% endfor %}
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Account</div>
+        {{ plan.account.name }} ({{ plan.account.sid }})
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Origins</div>
+        {{ origins|join:", " }}
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Templates</div>
+        {% for template in templates %}
+        <div class="list-item">
+          <span style="padding:4px;">{{ template.name }}</span>
+          <span style="padding:8px;"></span>
+          <pre>{{ template.body }}</pre>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- -->
+      <input type="button" id="execute-plan" name="execute-plan" value="Execute" onclick="executePlan()">
+      <script>
+        function executePlan() {
+          if (confirm('You are about to message {{ total }} people.  Are you sure you want to execute this plan?')) {
+            document.getElementById("execute-plan").disabled = true;
+            document.getElementById("plan").submit();
+          }
+        }
+      </script>
+    </form>
+  </div>
+</div>
+{% endblock %}

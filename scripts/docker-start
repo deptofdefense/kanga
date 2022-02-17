@@ -1,0 +1,3 @@
+#!/bin/bash
+
+open --background -a Docker 2> /dev/null

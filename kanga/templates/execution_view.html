@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block extrastyle %}
+<style>
+  table {
+    margin-bottom: 10px;
+  }
+  table tr td, table tr th {
+    border: 2px solid black;
+    padding: 4px;
+  }
+  table tr td {
+    text-align: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Results</span>
+  </div>
+  <div class="section-body">
+    <div style="width:800px">
+      <h3>Time</h3>
+      {{ execution.created_at }} ({{ execution.uuid }})
+    </div>
+    <div style="width:800px">
+      <h3>Plan</h3>
+      {{ plan.name }} ({{ plan.uuid }})
+    </div>
+    <div style="width:800px">
+      <h3>Groups</h3>
+      {{ plan.groups|join:", " }}
+    </div>
+    <div style="width:800px">
+      <h3>Platforms</h3>
+      {{ plan.platforms|join:", " }}
+    </div>
+    <div style="width:800px">
+      <h3>Account</h3>
+      {{ plan.account.name }} ({{ plan.account.sid }})
+    </div>
+    <div style="width:800px">
+      <h3>Origins</h3>
+      {{ plan.origins|join:", " }}
+    </div>
+    <div style="width:800px">
+      <h3>Templates Used</h3>
+      {% for t in plan.templates %}
+      <div class="list-item">
+        <pre>{{ t }}</pre>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="width:800px">
+      <h3>Metrics</h3>
+      <div class="list-item">
+        <div class="item-body" style="display: inline-block;">
+          <div class="item-title">Messages attempted by platform</div>
+          <div class="item-subtitle">How many messages were attempted to be sent across eacch platform.</div>
+          <br>
+          <table>
+            <tr><th>Platform</th><th>Count</th></tr>
+            {% for m in metrics.platforms %}
+            <tr><th>{{ m.platform }}</th><td>{{ m.count }}</td></tr>
+            {% endfor %}
+          </table>
+        </div>
+        <br>
+      </div>
+      <div class="list-item">
+        <div class="item-body" style="display: inline-block;">
+          <div class="item-title">Messages attempted by origin</div>
+          <div class="item-subtitle">How many messages were attempted to be sent for each origin phone number.</div>
+          <br>
+          <table>
+            <tr><th>Origin</th><th>Count</th></tr>
+            {% for m in metrics.origins %}
+            <tr><th>{{ m.origin }}</th><td>{{ m.count }}</td></tr>
+            {% endfor %}
+          </table>
+        </div>
+        <br>
+      </div>
+    </div>
+    <div style="width:800px">
+      <h3>Individual Messages Sent</h3>
+      {% for m in messages %}
+      <div class="list-item">
+        <span>{{ m.origin.phone_number }} => {{ m.target.phone_number }} ({{ m.sent_at }})</span>
+        <pre>{{ m.content.body }}</pre>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

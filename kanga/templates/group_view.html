@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">View Group {{ g.uuid }}</span>
+  </div>
+  <div>
+    <form class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ g.uuid }}">
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="{{ g.name }}" disabled><br>
+      </div>
+    </form>
+  </div>
+</div>
+<hr>
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Metrics</span>
+  </div>
+  <br>
+  <div class="list-item">
+    <div class="item-body" style="display: inline-block;">
+      <div class="item-title">Targets</div>
+      <div class="item-subtitle">How many targets are a member of this group.</div>
+      <br>
+      <div>{{ targets|length }}</div>
+    </div>
+    <br>
+  </div>
+</div>
+<hr>
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Targets</span>
+    <a href="{% url 'targets_import' %}?group={{ g.uuid }}" class="section-btn">
+      <span>Import From File</span>
+    </a>
+    <a href="{% url 'target_new' %}?group={{ g.uuid }}" class="section-btn">
+      <span>Add Target</span>
+    </a>
+  </div>
+  <br>
+  {% if targets %}
+    {% for t in targets %}
+    <div class="list-item">
+      <div class="item-body" style="display: inline-block;">
+        <div class="item-title">{{ t.last_name }}, {{ t.first_name }} ({{ t.group.name }})</div>
+        <div class="item-subtitle">({{ t.phone_number }})</div>
+      </div>
+      <a href="{% url 'target_delete' u=t.uuid %}" class="btn" style="float:right;"><span>Delete</span></a>
+      <a href="{% url 'target_edit' u=t.uuid %}" class="btn" style="float:right;"><span>Edit</span></a>
+      <a href="{% url 'target_view' u=t.uuid %}" class="btn" style="float:right;"><span>View</span></a>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No targets found</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

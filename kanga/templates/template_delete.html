@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Delete Template {{ t.uuid }}</span>
+  </div>
+  <div class="section-body">
+    <form action="{% url 'template_delete' u=t.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ t.uuid }}" readonly>
+      <label for="name">Name:</label><br>
+      <input type="text" id="name" value="{{ t.name }}" disabled><br>
+      <label for="body">Body:</label><br>
+      <textarea rows="8" cols="80" class="form-textarea" disabled>{{ t.body }}</textarea>
+      <input type="submit" value="Delete Template">
+    </form>
+  </div>
+</div>
+{% endblock %}

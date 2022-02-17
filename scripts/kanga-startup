@@ -1,0 +1,99 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly DIR
+
+usage() {
+  echo "${0##*/} [environment]"
+  exit 1
+}
+
+if [[ "$#" -ne 1 ]]; then
+  usage
+fi
+
+if [[ -z ${REMOTE_FIXTURES_BUCKET_NAME:-} ]]; then
+  echo "error: REMOTE_FIXTURES_BUCKET_NAME is missing." 1>&2
+  exit 1
+fi
+
+if [[ -z ${TLS_CERTS_BUCKET_NAME:-} ]]; then
+  echo "error: TLS_CERTS_BUCKET_NAME is missing." 1>&2
+  exit 1
+fi
+
+if ! command -v aws &> /dev/null; then
+  echo "error: aws not installed" 1>&2
+  exit 1
+fi
+
+if ! command -v docker &> /dev/null; then
+  echo "error: docker not installed" 1>&2
+  exit 1
+fi
+
+if ! command -v docker-compose &> /dev/null; then
+  echo "error: docker-compose not installed" 1>&2
+  exit 1
+fi
+
+if ! command -v jq &> /dev/null; then
+  echo "error: jq not installed" 1>&2
+  exit 1
+fi
+
+env=$1
+
+#
+# Env Vars
+#
+export RETRIEVED_POSTGRES_PASSWORD=$(aws ssm get-parameter --name "/app-kanga-${env}/db_pass" --with-decryption | jq -r ".Parameter.Value")
+
+export DB_HOST=${DB_HOST:-localhost}
+export DB_PORT=${DB_PORT:-5432}
+export DB_USER=${DB_USER:-kanga}
+export DB_NAME=${DB_NAME:-kanga}
+export APP_PORT=${APP_PORT:-8080}
+export POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-RETRIEVED_POSTGRES_PASSWORD}
+export DB_PASSWORD=${DB_PASSWORD:-${POSTGRES_PASSWORD}}
+export WEB_PORT_HTTP=${WEB_PORT_HTTP:-80}
+export WEB_PORT_HTTPS=${WEB_PORT_HTTPS:-443}
+
+#
+# DB
+#
+
+"${DIR}/docker-build-db" "docker/postgis" "kanga-db"
+
+docker-compose up -d db
+
+#
+# App
+#
+
+"${DIR}/docker-build-app" "docker/kanga/gunicorn" "kanga-app"
+
+docker-compose up -d app
+
+#
+# Web
+#
+
+make temp/ca.crt temp/server.crt
+
+mkdir -p "${DIR}/../docker/nginx/temp"
+
+# copy certificate authority
+aws s3 cp \
+"s3://${TLS_CERTS_BUCKET_NAME}/DOD_ROOT_CA_3.pem" \
+"${DIR}/../docker/nginx/temp/ca.crt"
+
+cp "${DIR}/../temp/server.crt" "${DIR}/../docker/nginx/temp/server.crt"
+
+cp "${DIR}/../temp/server.key" "${DIR}/../docker/nginx/temp/server.key"
+
+pushd "${DIR}/../docker/nginx"
+docker build -f Dockerfile --tag "kanga-web:latest" .
+popd

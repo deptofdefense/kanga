@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">View Target</span>
+  </div>
+  <div class="section-body">
+    <form action="{% url 'target_view' u=t.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ t.uuid }}">
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">First Name</div>
+        <input type="text" id="first_name" name="first_name" value="{{ t.first_name }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Last Name</div>
+        <input type="text" id="last_name" name="last_name" value="{{ t.last_name }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Group</div>
+        {% for g in groups %}
+          {% if g.id == t.group_id %}
+          <input type="text" id="group" name="group" value="{{ g.name }}" disabled><br>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Phone Number</div>
+        <input type="tel" id="phone_number" name="phone_number" value="{{ t.phone_number }}" disabled><br>
+      </div>
+      <!-- -->
+    </form>
+  </div>
+</div>
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Messages with Target</span>
+  </div>
+  <div class="section-body">
+    <div style="width:800px">
+      {% for m in messages %}
+      <div class="list-item">
+        <span>{{ m.origin.phone_number }} => {{ m.target.phone_number }} ({{ m.sent_at }})</span>
+        <pre>{{ m.content.body }}</pre>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

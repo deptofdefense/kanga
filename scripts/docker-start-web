@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly DIR
+
+usage() {
+  echo "${0##*/} <image> <name>"
+  exit 1
+}
+
+if [[ "$#" -ne 2 ]]; then
+  usage
+fi
+
+image=$1
+name=$2
+
+if ! docker start ${name} > /dev/null 2>&1; then
+  docker run -d --name ${name} \
+  -e NGINX_HOST=${NGINX_HOST} \
+  -p 8000:80 \
+  ${image}
+fi

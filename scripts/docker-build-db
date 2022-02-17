@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly DIR
+
+usage() {
+  echo "${0##*/} <path> <image>"
+  exit 1
+}
+
+if [[ "$#" -ne 2 ]]; then
+  usage
+fi
+
+path=$1
+image=$2
+
+pushd ${path}
+docker build -f Dockerfile --tag "${image}:latest" .
+popd

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Edit Account {{ a.uuid }}</span>
+  </div>
+  <div>
+    <form action="{% url 'account_edit' u=a.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ a.uuid }}">
+
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="{{ a.name }}"><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">SID</div>
+        <input type="text" id="sid" name="sid" value="{{ a.sid }}"><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Auth Token</div>
+        <input type="text" id="auth_token" name="auth_token" value="{{ a.auth_token }}"><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Active</div>
+        <select type="text" id="active" name="active">
+          <option value="yes"{% if a.active %} selected{% endif %}>yes</option>
+          <option value="no"{% if not a.active %} selected{% endif %}>no</option>
+        </select>
+      </div>
+      <!-- -->
+      <input type="submit" value="Save">
+    </form>
+  </div>
+</div>
+{% endblock %}

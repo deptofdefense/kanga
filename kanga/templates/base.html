@@ -1,0 +1,43 @@
+{% extends "root.html" %}
+
+{% block body %}
+{% if not user.is_authenticated %}
+<pre>
+You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
+By using this IS (which includes any device attached to this IS), you consent to the following conditions:
+The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
+At any time, the USG may inspect and seize data stored on this IS.
+Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
+This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
+Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential
+</pre>
+{% endif %}
+<div style="padding:20px;">
+  {% block navbar %}
+  <table class="navbar">
+    <tr>
+      {% if user.is_authenticated %}
+      <td class="navbar-btn"><a href="/">Home</a></td>
+      <td class="navbar-btn"><a href="/accounts">Accounts</a></td>
+      <td class="navbar-btn"><a href="/groups">Groups</a></td>
+      <td class="navbar-btn"><a href="/targets">Targets</a></td>
+      <td class="navbar-btn"><a href="/plans">Plans</a></td>
+      <td class="navbar-btn"><a href="/results">Results</a></td>
+      <td class="navbar-btn"><a href="/templates">Templates</a></td>
+      <td class="navbar-btn"><a href="/assets">Assets</a></td>
+      {% if user.is_staff %}
+      <td class="navbar-btn"><a href="/admin" target="_blank">Admin</a></td>
+      {% endif %}
+      <td class="navbar-btn"><a href="/admin/logout">Logout</a></td>
+      {% else %}
+      <td class="navbar-btn"><a href="/admin/login/?next=/">Login</a></td>
+      {% endif %}
+    </tr>
+  </table>
+  {% endblock %}
+  {% if user.is_authenticated %}
+  {% block content %}
+  {% endblock %}
+  {% endif %}
+</div>
+{% endblock %}

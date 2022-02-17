@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Template</span>
+    <a href="{% url 'template_new' %}" class="section-btn">
+      <span>Add Template</span>
+    </a>
+  </div>
+  <br>
+  {% if templates %}
+    {% for t in templates %}
+    <div class="list-item">
+      <div class="item-body" style="display: inline-block;">
+        <div class="item-title">{{ t.name }}</div>
+        <div class="item-subtitle">({{ t.uuid }})</div>
+      </div>
+      <a href="{% url 'template_delete' u=t.uuid %}" class="btn" style="float:right;"><span>Delete</span></a>
+      <a href="{% url 'template_edit' u=t.uuid %}" class="btn" style="float:right;"><span>Edit</span></a>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div class="list-item"><span>No groups found</span></div>
+  {% endif %}
+</div>
+{% endblock %}

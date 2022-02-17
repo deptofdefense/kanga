@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly DIR
+
+KANGA_VERSION=0.0.1
+
+usage() {
+  echo "${0##*/} <path> <image>"
+  exit 1
+}
+
+if [[ "$#" -ne 2 ]]; then
+  usage
+fi
+
+path=$1
+image=$2
+
+make bin/rds-ca-2019-root.pem bin_linux/chamber
+
+# Delete previous builds
+rm -fr dist/kanga-${KANGA_VERSION}-py3-none-any.whl
+rm -fr dist/kanga-${KANGA_VERSION}.tar.gz
+
+# Build kanga Python wheel
+python3 -m build --wheel
+
+mkdir -p "${DIR}/../docker/kanga/gunicorn/temp"
+
+mkdir -p "${DIR}/../docker/kanga/gunicorn/bin_linux"
+
+# copy over requirements.txt
+cp "${DIR}/../requirements.txt" "${DIR}/../docker/kanga/gunicorn/temp/requirements.txt"
+
+cp "${DIR}/../dist/kanga-${KANGA_VERSION}-py3-none-any.whl" "${DIR}/../docker/kanga/gunicorn/temp/kanga-${KANGA_VERSION}-py3-none-any.whl"
+
+cp "${DIR}/../bin_linux/chamber" "${DIR}/../docker/kanga/gunicorn/bin_linux/chamber"
+
+cp "${DIR}/../bin/rds-ca-2019-root.pem" "${DIR}/../docker/kanga/gunicorn/temp/rds-ca-2019-root.pem"
+
+pushd ${path}
+docker build -f Dockerfile --tag "${image}:latest" .
+popd

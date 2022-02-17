@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Delete Group {{ g.uuid }}</span>
+  </div>
+  <div class="section-body">
+    <form action="{% url 'group_delete' u=g.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ g.uuid }}" readonly>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="{{ g.name }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-buttons">
+        <input type="submit" value="Delete Group">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

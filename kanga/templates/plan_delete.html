@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Delete Plan {{ p.uuid }}</span>
+  </div>
+  <div class="section-body">
+    <form action="{% url 'plan_delete' u=p.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ p.uuid }}" readonly>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="{{ p.name }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-buttons">
+        <input type="submit" value="Delete Plan">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

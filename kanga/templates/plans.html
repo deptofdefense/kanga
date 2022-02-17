@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Plans</span>
+    <a href="/plans/new" class="section-btn">
+      <span>Add Plan</span>
+    </a>
+  </div>
+  <br>
+  {% if plans %}
+    {% for p in plans %}
+    <div class="list-item">
+      <div class="item-body" style="display: inline-block;">
+        <div class="item-title">{{ p.name }}</div>
+        <div class="item-subtitle">Platforms: {{ p.platform_names|join:", " }}</div>
+        <div class="item-subtitle">Groups: {{ p.group_names|join:", " }}</div>
+      </div>
+      <a href="{% url 'plan_delete' u=p.uuid %}" class="btn" style="float:right;"><span>Delete</span></a>
+      <a href="{% url 'plan_edit' u=p.uuid %}" class="btn" style="float:right;"><span>Edit</span></a>
+      <a href="{% url 'plan_view' u=p.uuid %}" class="btn" style="float:right;"><span>Execute</span></a>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No plans found</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

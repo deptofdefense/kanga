@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">New Account</span>
+  </div>
+  <div>
+    <form action="{% url 'account_new' %}" method="post" class="form">
+      {% csrf_token %}
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value=""><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">SID</div>
+        <input type="text" id="sid" name="sid" value=""><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Auth Token</div>
+        <input type="text" id="auth_token" name="auth_token" value=""><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Active</div>
+        <select type="text" id="active" name="active">
+          <option value="yes">yes</option>
+          <option value="no">no</option>
+        </select>
+      </div>
+      <!-- -->
+      <input type="submit" value="Save">
+    </form>
+  </div>
+</div>
+{% endblock %}

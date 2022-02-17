@@ -1,0 +1,16 @@
+bin
+build
+.envrc.local
+data
+temp
+bin_linux
+*.egg-info
+*.pyc
+mnt
+__pycache__
+.venv
+dist
+.DS_Store
+.env.prod
+*.vars
+static

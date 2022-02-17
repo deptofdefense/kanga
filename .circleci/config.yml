@@ -1,0 +1,40 @@
+version: "2.1"
+
+executors:
+  # `main` uses the `cimg/python:3.9.7` docker image
+  main:
+    docker:
+      - image: cimg/python:3.9.7
+
+jobs:
+
+  # `deps` is used to check the Python dependencies.
+  deps:
+    executor: main
+    steps:
+      - checkout
+      - run: python3 -m venv .venv
+      - run: .venv/bin/python3 --version
+      - run: .venv/bin/pip --version
+      - run: .venv/bin/pip install -e .
+
+  # `test` is used to test the Python package.
+  test:
+    executor: main
+    steps:
+      - checkout
+      - run: python3 -m venv .venv
+      - run: .venv/bin/python3 --version
+      - run: .venv/bin/pip --version
+      - run: .venv/bin/pip install -e .
+      - run: .venv/bin/pip install flake8
+      - run: .venv/bin/flake8 kanga manage.py setup.py
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - deps
+      - test:
+          requires:
+            - deps

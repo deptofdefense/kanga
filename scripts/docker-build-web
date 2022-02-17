@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+readonly DIR
+
+usage() {
+  echo "${0##*/} <path> <image>"
+  exit 1
+}
+
+if [[ "$#" -ne 2 ]]; then
+  usage
+fi
+
+path=$1
+image=$2
+
+# Safely use 'make' when files are missing
+for filename in ca.crt DoDRoots.crt server.crt server.key; do
+  if [ ! -f "temp/${filename}" ]; then
+    make "temp/${filename}"
+  fi
+done
+
+# Make certificate authority
+
+make temp/ca.crt
+
+# Make DODRoot cert bundle
+
+make temp/DoDRoots.crt
+
+# Combine CA Certs
+cat "${DIR}/../temp/ca.crt" "${DIR}/../temp/DoDRoots.crt" >> "${DIR}/../temp/ca-combined.crt"
+
+pushd ${path}
+docker build -f Dockerfile --tag "${image}:latest" .
+popd

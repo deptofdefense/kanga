@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">{{ asset.name }}</span>
+    <a href="/asset/{{ asset.uuid }}/edit" class="section-btn">
+      <span>Edit</span>
+    </a>
+  </div>
+</div>
+<div class="section">
+</div>
+{% endblock %}

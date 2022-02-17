@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Import Targets</span>
+  </div>
+  <div class="section-body">
+    <form
+      id="targets"
+      name="targets"
+      class="form"
+      action="{% url 'targets_import' %}"
+      method="post"
+      enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- -->
+      {% if errors_by_field %}
+      <div class="form-group">
+        <div class="form-group-title">Errors</div>
+        <div class="errors" style="color: darkred;">
+          {% for name, errors in errors_by_field.items %}
+          <div>
+            <div>{{ name }}</div>
+            {% for error in errors %}
+              <div>- {{ error }}</div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Group {{ g.name }}</div>
+        <select type="text" id="group" name="group">
+          <option value="--">--</option>
+          {% for group in groups %}
+          <option value="{{ group.uuid }}"{% if group.uuid == group_uuid %} selected{% endif %}>{{ group.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">File Format</div>
+        <select type="text" id="file_format" name="file_format">
+          <option value="--">--</option>
+          {% for f in file_formats %}
+          <option value="{{ f }}">{{ f }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Sheet Name</div>
+        <input type="text" id="sheet_name" name="sheet_name" value="Sheet1">
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">First Name Field</div>
+        <input type="text" id="first_name_field" name="first_name_field" value="first/given name(s):">
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Last Name Field</div>
+        <input type="text" id="last_name_field" name="last_name_field" value="family/surname:">
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Phone Number Field</div>
+        <input type="text" id="phone_number_field" name="phone_number_field" value="formatted_number">
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">File</div>
+        <input type="file" id="file" name="file"><br>
+      </div>
+      <!-- -->
+      <div class="form-buttons">
+        <input type="button" id="import-targets" name="import-targets" value="Import Targets" onclick="importTargets()">
+        <script>
+          function importTargets() {
+            if (confirm('Are you sure you want to import the targets?')) {
+              document.getElementById("import-targets").disabled = true;
+              document.getElementById("targets").submit();
+            }
+          }
+        </script>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

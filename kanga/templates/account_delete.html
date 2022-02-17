@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Delete Account {{ a.uuid }}</span>
+  </div>
+  <div>
+    <form action="{% url 'account_delete' u=a.uuid %}" method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" id="uuid" name="uuid" value="{{ a.uuid }}" readonly>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Name</div>
+        <input type="text" id="name" name="name" value="{{ a.name }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">SID</div>
+        <input type="text" id="sid" name="sid" value="{{ a.sid }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Auth Token</div>
+        <input type="text" id="auth_token" name="auth_token" value="{{ a.auth_token }}" disabled><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Active</div>
+        <input type="text" id="active" name="active" value="{{ a.active }}" disabled><br>
+      </div>
+      <!-- -->
+      <input type="submit" value="Delete Account">
+    </form>
+  </div>
+</div>
+{% endblock %}

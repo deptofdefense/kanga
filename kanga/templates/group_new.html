@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">New Group</span>
+  </div>
+  <div>
+    <form action="{% url 'group_new' %}" method="post" class="form">
+      {% csrf_token %}
+      <!-- -->
+      <label for="name">Name:</label><br>
+      <input type="text" id="name" name="name" value=""><br>
+      <!-- -->
+      <input type="submit" value="Save">
+    </form>
+  </div>
+</div>
+{% endblock %}

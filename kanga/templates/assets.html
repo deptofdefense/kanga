@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Assets</span>
+    <a href="/asssets/import" class="section-btn">
+      <span>Import</span>
+    </a>
+  </div>
+  <br>
+  {% if assets %}
+    {% for a in assets %}
+    <div class="list-item">
+      <span>{{ a.name }} ({{ a.uuid }})</span>
+      <form><button class="btn" style="float:right;"><span>Duplicate</span></button></form>
+      <form><button class="btn" style="float:right;"><span>Remove</span></button></form>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No assets found</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

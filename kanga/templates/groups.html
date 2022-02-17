@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Groups</span>
+    <a href="{% url 'group_new' %}" class="section-btn">
+      <span>Add Group</span>
+    </a>
+  </div>
+  <br>
+  {% if groups %}
+    {% for g in groups %}
+    <div class="list-item">
+      <div class="item-body" style="display: inline-block;">
+        <div class="item-title">{{ g.name }}</div>
+        <div class="item-subtitle">({{ g.uuid }})</div>
+      </div>
+      <a href="{% url 'group_delete' u=g.uuid %}" class="btn" style="float:right;"><span>Delete</span></a>
+      <a href="{% url 'group_edit' u=g.uuid %}" class="btn" style="float:right;"><span>Edit</span></a>
+      <a href="{% url 'group_view' u=g.uuid %}" class="btn" style="float:right;"><span>View</span></a>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No groups found</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

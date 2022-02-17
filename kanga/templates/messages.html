@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Messages</span>
+  </div>
+  <br>
+  {% if messages %}
+    {% for m in messages %}
+    <div class="list-item">
+      <div class="item-body" style="display: inline-block;">
+        <div class="item-title">{{ m.subject }})</div>
+      </div>
+      <pre>{{ m.body }}</pre>
+      <a href="{% url 'target_delete' u=t.uuid %}" class="btn" style="float:right;"><span>Delete</span></a>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No messages sent</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Prepare Mass Notification</h3>
+<form action="{% url 'account_plan' u=a.uuid %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" id="account" name="account" value="{{ a.uuid }}">
+  <input type="type" id="plan_name" name="plan_name" value="">
+  <div style="width:800px">
+    <h3>Select Platforms</h3>
+    {% for platform in platforms %}
+    <input type="checkbox" id="platform-{{ platform.id }}" name="platform-{{ platform.id }}" value="{{ platform.id }}">
+    <label style="padding:4px;" for="platform-{{ platform.id }}"> {{ platform.title }}</label><span style="padding:8px;"></span>
+    {% if forloop.counter0|add:"1"|divisibleby:"6" %}
+    <br>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <div style="width:800px">
+    <h3>Select Target Groups</h3>
+    {% for group in groups %}
+    <input type="checkbox" id="group-{{ group.id }}" name="group-{{ group.id }}" value="{{ group.uuid }}">
+    <label style="padding:4px;" for="group-{{ group.id }}"> {{ group.name }}</label><span style="padding:8px;"></span>
+    {% if forloop.counter0|add:"1"|divisibleby:"6" %}
+    <br>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <div style="width:800px">
+    <h3>Select Origin Phone Numbers</h3>
+    {% for origin in origins %}
+    <input type="checkbox" id="origin-{{ origin.id }}" name="origin-{{ origin.id }}" value="{{ origin.uuid }}">
+    <label style="padding:4px;" for="origin-{{ origin.id }}"> {{ origin.phone_number.as_e164 }}</label><span style="padding:8px;"></span>
+    {% if forloop.counter0|add:"1"|divisibleby:"4" %}
+    <br>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <div style="width:800px">
+    <h3>Select Messages</h3>
+    {% for t in templates %}
+    <div style="border:1px solid black;padding:10px;">
+      <input type="checkbox" id="template-{{ t.id }}" name="template-{{ t.id }}" value="{{ t.uuid }}">
+      <h4>{{ t.name }}</h4>
+      <span>{{ t.body }}</span>
+      <br>
+    </div>
+    {% endfor %}
+  </div>
+  <div style="padding:10px;">
+    <input type="submit" value="Create Plan">
+  </div>
+</form>
+{% endblock %}

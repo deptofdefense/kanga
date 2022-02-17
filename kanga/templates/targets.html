@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">Targets</span>
+    <a href="{% url 'targets_import' %}" class="section-btn">
+      <span>Import From File</span>
+    </a>
+    <a href="{% url 'target_new' %}" class="section-btn">
+      <span>Add Target</span>
+    </a>
+  </div>
+  <br>
+  {% if targets %}
+    {% for t in targets %}
+    <div class="list-item">
+      <div class="item-body" style="display: inline-block;">
+        <div class="item-title">{{ t.last_name }}, {{ t.first_name }} ({{ t.group.name }})</div>
+        <div class="item-subtitle">({{ t.phone_number }})</div>
+      </div>
+      <a href="{% url 'target_delete' u=t.uuid %}" class="btn" style="float:right;"><span>Delete</span></a>
+      <a href="{% url 'target_edit' u=t.uuid %}" class="btn" style="float:right;"><span>Edit</span></a>
+      <a href="{% url 'target_view' u=t.uuid %}" class="btn" style="float:right;"><span>View</span></a>
+      <br>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div style="border:1px solid black;padding:10px;">
+    <span>No targets found</span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

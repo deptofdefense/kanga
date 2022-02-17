@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">New Target</span>
+  </div>
+  <div class="section-body">
+    <form action="{% url 'target_new' %}" method="post" class="form">
+      {% csrf_token %}
+      <div class="form-group">
+        <div class="form-group-title">First Name</div>
+        <input type="text" id="first_name" name="first_name" value=""><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Last Name</div>
+        <input type="text" id="last_name" name="last_name" value=""><br>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Group</div>
+        <select type="text" id="group" name="group">
+          <option value="--">--</option>
+          {% for group in groups %}
+          <option value="{{ group.uuid }}"{% if group.uuid == group_uuid %} selected{% endif %}>{{ group.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- -->
+      <div class="form-group">
+        <div class="form-group-title">Phone Number</div>
+        <input type="tel" id="phone_number" name="phone_number" value=""><br>
+      </div>
+      <!-- -->
+      <input type="submit" value="Save">
+    </form>
+  </div>
+</div>
+{% endblock %}
