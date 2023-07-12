@@ -2,15 +2,15 @@
 
 set -eu -o pipefail
 
-if ! command -v psql &> /dev/null; then
-  echo "error: psql not installed" 1>&2
-  exit 1
+if ! command -v psql &>/dev/null; then
+        echo "error: psql not installed" 1>&2
+        exit 1
 fi
 
 command="${*:-}"
 
 if [ -n "${command[*]}" ]; then
-  exec psql --variable "ON_ERROR_STOP=1" postgres://${DB_USER}:"${DB_PASSWORD}"@${DB_HOST}:"${DB_PORT}"/"${DB_NAME}" -c "${command}"
+        exec psql --variable "ON_ERROR_STOP=1" postgres://${DB_USER}:"${DB_PASSWORD}"@${DB_HOST}:"${DB_PORT}"/"${DB_NAME}" -c "${command}"
 else
-  exec psql --variable "ON_ERROR_STOP=1" postgres://${DB_USER}:"${DB_PASSWORD}"@${DB_HOST}:"${DB_PORT}"/"${DB_NAME}"
+        exec psql --variable "ON_ERROR_STOP=1" postgres://${DB_USER}:"${DB_PASSWORD}"@${DB_HOST}:"${DB_PORT}"/"${DB_NAME}"
 fi
